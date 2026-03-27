@@ -1,4 +1,4 @@
-package in.rishank.investmentplatform.entity;
+package in.rishank.investmentplatform.asset.entity;
 
 
 import jakarta.persistence.*;
@@ -16,7 +16,7 @@ public class Asset {
 
     private String category;
 
-    private double expenseRatio;
+    private Double expenseRatio;
 
     public Long getId() {
         return id;

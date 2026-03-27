@@ -1,8 +1,7 @@
-package in.rishank.investmentplatform.controller;
+package in.rishank.investmentplatform.asset.controller;
 
-import in.rishank.investmentplatform.entity.Asset;
-import in.rishank.investmentplatform.service.AssetService;
-import org.springframework.beans.factory.annotation.Autowired;
+import in.rishank.investmentplatform.asset.entity.Asset;
+import in.rishank.investmentplatform.asset.service.AssetService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,8 +10,11 @@ import java.util.List;
 @RequestMapping("/assets")
 public class AssetController {
 
-    @Autowired
-    private AssetService service;
+    private final AssetService service;
+
+    public AssetController(AssetService service) {
+        this.service = service;
+    }
 
     @PostMapping
     public Asset create(@RequestBody Asset asset){

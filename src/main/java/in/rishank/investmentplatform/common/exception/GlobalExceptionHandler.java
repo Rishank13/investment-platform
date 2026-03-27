@@ -1,4 +1,4 @@
-package in.rishank.investmentplatform.exception;
+package in.rishank.investmentplatform.common.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;

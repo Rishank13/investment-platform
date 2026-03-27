@@ -1,4 +1,4 @@
-package in.rishank.investmentplatform.exception;
+package in.rishank.investmentplatform.common.exception;
 
 public class ResourceNotFoundException extends RuntimeException{
 

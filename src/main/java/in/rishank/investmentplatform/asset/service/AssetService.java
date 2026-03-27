@@ -1,9 +1,8 @@
-package in.rishank.investmentplatform.service;
+package in.rishank.investmentplatform.asset.service;
 
-import in.rishank.investmentplatform.entity.Asset;
-import in.rishank.investmentplatform.exception.ResourceNotFoundException;
-import in.rishank.investmentplatform.repository.AssetRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import in.rishank.investmentplatform.asset.entity.Asset;
+import in.rishank.investmentplatform.common.exception.ResourceNotFoundException;
+import in.rishank.investmentplatform.asset.repository.AssetRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,8 +10,11 @@ import java.util.List;
 @Service
 public class AssetService {
 
-    @Autowired
-    private AssetRepository repo;
+    private final AssetRepository repo;
+
+    public AssetService(AssetRepository repo) {
+        this.repo = repo;
+    }
 
     public Asset save(Asset asset){
         return repo.save(asset);

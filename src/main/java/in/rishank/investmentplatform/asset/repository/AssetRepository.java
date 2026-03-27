@@ -1,6 +1,6 @@
-package in.rishank.investmentplatform.repository;
+package in.rishank.investmentplatform.asset.repository;
 
-import in.rishank.investmentplatform.entity.Asset;
+import in.rishank.investmentplatform.asset.entity.Asset;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AssetRepository extends JpaRepository<Asset, Long> {
