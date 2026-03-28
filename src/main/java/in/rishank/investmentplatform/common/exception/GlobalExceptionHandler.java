@@ -13,4 +13,10 @@ public class GlobalExceptionHandler {
     public String handleResourceNotFound(ResourceNotFoundException ex){
         return ex.getMessage();
     }
+
+    @ExceptionHandler(InsufficientDataException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleInsufficientData(InsufficientDataException ex){
+        return ex.getMessage();
+    }
 }
