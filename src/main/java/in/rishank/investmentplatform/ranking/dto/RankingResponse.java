@@ -4,7 +4,7 @@ public class RankingResponse {
 
     private Long assetId;
     private String name;
-    private Double vale;
+    private Double value;
 
     public Long getAssetId() {
         return assetId;
@@ -22,11 +22,11 @@ public class RankingResponse {
         this.name = name;
     }
 
-    public Double getVale() {
-        return vale;
+    public Double getValue() {
+        return value;
     }
 
-    public void setVale(Double vale) {
-        this.vale = vale;
+    public void setValue(Double value) {
+        this.value = value;
     }
 }

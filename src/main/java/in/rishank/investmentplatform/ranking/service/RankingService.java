@@ -4,72 +4,102 @@ import in.rishank.investmentplatform.analytics.dto.AnalyticsResponse;
 import in.rishank.investmentplatform.analytics.service.AnalyticsService;
 import in.rishank.investmentplatform.asset.entity.Asset;
 import in.rishank.investmentplatform.asset.service.AssetService;
+import in.rishank.investmentplatform.common.exception.InsufficientDataException;
 import in.rishank.investmentplatform.common.exception.InvalidMetricException;
+import in.rishank.investmentplatform.pricing.entity.PriceHistory;
+import in.rishank.investmentplatform.pricing.repository.PriceHistoryRepository;
 import in.rishank.investmentplatform.ranking.dto.RankingResponse;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class RankingService {
 
     private final AssetService assetService;
+    private final PriceHistoryRepository priceHistoryRepository;
     private final AnalyticsService analyticsService;
 
 
-    public RankingService(AssetService assetService,
+    public RankingService(AssetService assetService, PriceHistoryRepository priceHistoryRepository,
                           AnalyticsService analyticsService) {
         this.assetService = assetService;
+        this.priceHistoryRepository = priceHistoryRepository;
         this.analyticsService = analyticsService;
     }
 
-    public List<RankingResponse> getTopAssets(int period, String metric){
+    public List<RankingResponse> getTopAssets(int period, String metric) {
         List<Asset> assets = assetService.getAll();
         List<RankingResponse> result = new ArrayList<>();
 
-        for(Asset asset : assets){
-            AnalyticsResponse analytics =
-                    analyticsService.getAnalytics(asset.getId(), period);
+        if (assets.isEmpty()) return Collections.emptyList();
 
-            double value;
+        //Extracting IDs
+        List<Long> assetIds = assets.stream().map(Asset::getId).toList();
 
-            if(metric.equalsIgnoreCase("cagr")){
-                value = analytics.getCagr();
-            }
-            else if(metric.equalsIgnoreCase("return")){
-                value = analytics.getReturnPercentage();
-            }
-            else if(metric.equalsIgnoreCase("volatility")){
-                value = analytics.getVolatility();
-            }
-            else if(metric.equalsIgnoreCase("score")){
-                value = calculateScore(analytics, asset);
-            }
-            else {
-                throw new InvalidMetricException("Invalid metric");
-            }
+        //Single DB call
+        List<PriceHistory> allPrices =
+                priceHistoryRepository.findByAsset_IdInOrderByAsset_IdAscDateAsc(assetIds);
 
-            RankingResponse r = new RankingResponse();
-            r.setAssetId(asset.getId());
-            r.setName(asset.getName());
-            r.setVale(value);
+        Map<Long, List<PriceHistory>> priceMap =
+                allPrices.stream()
+                        .collect(Collectors.groupingBy(
+                                p -> p.getAsset().getId(),
+                                LinkedHashMap::new,
+                                Collectors.toList()
+                        ));
 
-            result.add(r);
+        for (Asset asset : assets) {
+
+            List<PriceHistory> prices = priceMap.get(asset.getId());
+
+            //handle null case
+            if (prices == null || prices.isEmpty()) continue;
+
+            //NO DB CALL HERE
+            try {
+                AnalyticsResponse analytics =
+                        analyticsService.calculate(prices, period);
+
+
+                double value;
+
+                switch (metric.toLowerCase()) {
+                    case "cagr" -> value = analytics.getCagr();
+                    case "return" -> value = analytics.getReturnPercentage();
+                    case "volatility" -> value = analytics.getVolatility();
+                    case "score" -> value = calculateScore(analytics, asset);
+                    default -> throw new InvalidMetricException("Invalid metric");
+                }
+
+                RankingResponse r = new RankingResponse();
+                r.setAssetId(asset.getId());
+                r.setName(asset.getName());
+                r.setValue(value);
+
+                result.add(r);
+
+            } catch (Exception e) {
+                continue; //skip bad asset (if no enough data for particular asset)
+            }
         }
 
-        if(metric.equalsIgnoreCase("volatility")){
-            result.sort(Comparator.comparingDouble(RankingResponse::getVale));
+        if (result.isEmpty()) {
+            throw new InsufficientDataException("Not enough data for any asset");
+        }
+
+        if (metric.equals("volatility")) {
+            result.sort(Comparator.comparingDouble(RankingResponse::getValue));
         } else {
             result.sort((a, b)
-                    -> Double.compare(b.getVale(), a.getVale()));
+                    -> Double.compare(b.getValue(), a.getValue()));
         }
 
         return result;
     }
 
-    private double calculateScore(AnalyticsResponse a, Asset asset){
+    private double calculateScore(AnalyticsResponse a, Asset asset) {
 
         return (0.5 * a.getCagr())
                 - (0.3 * a.getVolatility())

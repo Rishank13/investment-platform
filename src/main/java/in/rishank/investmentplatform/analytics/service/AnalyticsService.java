@@ -22,6 +22,10 @@ public class AnalyticsService {
 
         List<PriceHistory> prices = priceService.getPriceHistory(assetId);
 
+        return calculate(prices, years);
+    }
+
+    public AnalyticsResponse calculate(List<PriceHistory> prices, int years){
         LocalDate endDate = LocalDate.now();
         LocalDate startDate = endDate.minusYears(years);
 
@@ -32,7 +36,7 @@ public class AnalyticsService {
                 .toList();
 
         if(filtered.size() < 2){
-            throw new InsufficientDataException("Not enough data for CAGR calculation");
+            throw new InsufficientDataException("Not enough data");
         }
 
         //Generating Returns list
@@ -48,7 +52,7 @@ public class AnalyticsService {
 
         //Edge case
         if(returns.size() < 2){
-            throw new InsufficientDataException("Not enough data for volatility");
+            throw new InsufficientDataException("Not enough data");
         }
 
         //Mean return
@@ -65,7 +69,7 @@ public class AnalyticsService {
 
         variance = variance / returns.size();
 
-        //Standard Deviaion (Volatility)
+        //Standard Deviation (Volatility)
         double volatility = Math.sqrt(variance);
 
         volatility = volatility * 100;
