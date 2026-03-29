@@ -19,4 +19,10 @@ public class GlobalExceptionHandler {
     public String handleInsufficientData(InsufficientDataException ex){
         return ex.getMessage();
     }
+
+    @ExceptionHandler(InvalidMetricException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleInvalidMetric(InsufficientDataException ex) {
+        return ex.getMessage();
+    }
 }
