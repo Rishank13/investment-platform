@@ -21,7 +21,10 @@ public class RankingController {
 
     @GetMapping
     public List<RankingResponse> getRanking(@RequestParam int period,
-                                            @RequestParam String metric){
-        return rankingService.getTopAssets(period, metric);
+                                            @RequestParam String metric,
+                                            @RequestParam(required = false) String category,
+                                            @RequestParam(defaultValue = "1") int page,
+                                            @RequestParam(defaultValue = "10") int limit){
+        return rankingService.getTopAssets(period, metric, category, page, limit);
     }
 }

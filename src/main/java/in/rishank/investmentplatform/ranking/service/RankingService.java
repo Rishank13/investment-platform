@@ -29,8 +29,23 @@ public class RankingService {
         this.analyticsService = analyticsService;
     }
 
-    public List<RankingResponse> getTopAssets(int period, String metric) {
+    public List<RankingResponse> getTopAssets(int period, String metric,
+                                              String category, int page, int limit) {
         List<Asset> assets = assetService.getAll();
+        if(category != null){
+            assets = assets.stream().filter(a ->
+                            category.equalsIgnoreCase(a.getCategory()))
+                            .toList();
+        }
+
+        if (page < 1) {
+            throw new IllegalArgumentException("Page must be >= 1");
+        }
+
+        if (limit <= 0) {
+            throw new IllegalArgumentException("Limit must be > 0");
+        }
+
         List<RankingResponse> result = new ArrayList<>();
 
         if (assets.isEmpty()) return Collections.emptyList();
@@ -96,7 +111,17 @@ public class RankingService {
                     -> Double.compare(b.getValue(), a.getValue()));
         }
 
-        return result;
+        int start = (page-1) * limit;
+        //where a particular page starts, e.g. pg=3: start = 2*10 = 20th asset is first on page 3
+
+        int end = Math.min(start+limit, result.size());
+        //where page end, e.g. 20+10 = 30th asset is last on page 3
+
+        if (start >= result.size()) {
+            return Collections.emptyList();
+        }
+
+        return result.subList(start, end);
     }
 
     private double calculateScore(AnalyticsResponse a, Asset asset) {

@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidMetricException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleInvalidMetric(InsufficientDataException ex) {
+    public String handleInvalidMetric(InvalidMetricException ex) {
         return ex.getMessage();
     }
 }
