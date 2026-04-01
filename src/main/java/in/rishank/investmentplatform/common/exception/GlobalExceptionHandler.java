@@ -26,6 +26,12 @@ public class GlobalExceptionHandler {
         return ex.getMessage();
     }
 
+    @ExceptionHandler(NavFetchException.class)
+    @ResponseStatus(HttpStatus.BAD_GATEWAY)
+    public String handleNavFetch(NavFetchException ex) {
+        return ex.getMessage();
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String handleGeneric(Exception ex) {

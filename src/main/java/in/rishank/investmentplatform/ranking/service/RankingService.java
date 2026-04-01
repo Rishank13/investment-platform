@@ -9,6 +9,8 @@ import in.rishank.investmentplatform.common.exception.InvalidMetricException;
 import in.rishank.investmentplatform.pricing.entity.PriceHistory;
 import in.rishank.investmentplatform.pricing.repository.PriceHistoryRepository;
 import in.rishank.investmentplatform.ranking.dto.RankingResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -20,7 +22,7 @@ public class RankingService {
     private final AssetService assetService;
     private final PriceHistoryRepository priceHistoryRepository;
     private final AnalyticsService analyticsService;
-
+    private static final Logger log = LoggerFactory.getLogger(RankingService.class);
 
     public RankingService(AssetService assetService, PriceHistoryRepository priceHistoryRepository,
                           AnalyticsService analyticsService) {
@@ -96,11 +98,13 @@ public class RankingService {
                 result.add(r);
 
             } catch (Exception e) {
-                continue; //skip bad asset (if no enough data for particular asset)
+                log.debug("Unexpected error for asset {}", asset.getId(), e);
+                //skip bad asset (if no enough data for particular asset)
             }
         }
 
         if (result.isEmpty()) {
+            log.warn("No ranking results generated. Possibly insufficient data.");
             throw new InsufficientDataException("Not enough data for any asset");
         }
 

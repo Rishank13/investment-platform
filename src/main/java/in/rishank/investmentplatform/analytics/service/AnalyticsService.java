@@ -4,6 +4,8 @@ import in.rishank.investmentplatform.analytics.dto.AnalyticsResponse;
 import in.rishank.investmentplatform.common.exception.InsufficientDataException;
 import in.rishank.investmentplatform.pricing.entity.PriceHistory;
 import in.rishank.investmentplatform.pricing.service.PriceHistoryService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -13,6 +15,7 @@ import java.util.*;
 public class AnalyticsService {
 
     private final PriceHistoryService priceService;
+    private static final Logger log = LoggerFactory.getLogger(AnalyticsService.class);
 
     public AnalyticsService(PriceHistoryService priceService) {
         this.priceService = priceService;
@@ -36,6 +39,7 @@ public class AnalyticsService {
                 .toList();
 
         if(filtered.size() < 2){
+            log.warn("Insufficient data after filtering. Records found: {}", filtered.size());
             throw new InsufficientDataException("Not enough data");
         }
 
@@ -52,6 +56,7 @@ public class AnalyticsService {
 
         //Edge case
         if(returns.size() < 2){
+            log.warn("Insufficient return data. Returns calculated: {}", returns.size());
             throw new InsufficientDataException("Not enough data");
         }
 

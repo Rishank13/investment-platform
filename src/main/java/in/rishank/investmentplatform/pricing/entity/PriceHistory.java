@@ -6,6 +6,15 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
+@Table(
+        name = "price_history",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "unique_asset_date",
+                        columnNames = {"asset_id", "date"}
+                )
+        }
+)
 public class PriceHistory {
 
     @Id
@@ -13,10 +22,13 @@ public class PriceHistory {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "asset_id", nullable = false)
     private Asset asset;
 
+    @Column(nullable = false)
     private Double price;
 
+    @Column(name = "date", nullable = false)
     private LocalDate date;
 
     public Long getId() {
