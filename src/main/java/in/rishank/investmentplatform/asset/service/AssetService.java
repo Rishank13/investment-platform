@@ -42,9 +42,9 @@ public class AssetService {
             return null;
         }else{
             existing.setName(updatedAsset.getName());
+            existing.setSchemeCode(updatedAsset.getSchemeCode());
             existing.setAssetType(updatedAsset.getAssetType());
             existing.setCategory(updatedAsset.getCategory());
-            existing.setExpenseRatio(updatedAsset.getExpenseRatio());
 
             return repo.save(existing);
         }

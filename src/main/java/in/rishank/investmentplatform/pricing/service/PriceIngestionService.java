@@ -40,7 +40,7 @@ public class PriceIngestionService {
         for(Asset asset : assets){
 
             try {
-                NavData navData = navService.fetchNav(asset.getName());
+                NavData navData = navService.fetchNav(asset);
 
                 PriceHistory ph = new PriceHistory();
                 ph.setAsset(asset);

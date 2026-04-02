@@ -1,6 +1,8 @@
 package in.rishank.investmentplatform.pricing.service;
 
+import in.rishank.investmentplatform.asset.entity.Asset;
 import in.rishank.investmentplatform.common.exception.NavFetchException;
+import in.rishank.investmentplatform.config.NavApiConfig;
 import in.rishank.investmentplatform.pricing.dto.ExternalNavResponse;
 import in.rishank.investmentplatform.pricing.dto.NavData;
 import in.rishank.investmentplatform.pricing.mapper.NavMapper;
@@ -14,15 +16,17 @@ import org.springframework.web.client.RestTemplate;
 public class NavService {
 
     private final RestTemplate restTemplate;
+    private final NavApiConfig config;
     private static final Logger log = LoggerFactory.getLogger(NavService.class);
 
-    public NavService(RestTemplate restTemplate) {
+    public NavService(RestTemplate restTemplate, NavApiConfig config) {
         this.restTemplate = restTemplate;
+        this.config = config;
     }
 
-    public NavData fetchNav(String assetName) {
+    public NavData fetchNav(Asset asset) {
 
-        String url = "https://api.example.com/nav?asset=" + assetName;
+        String url = config.getBaseUrl() + "/mf/" + asset.getSchemeCode() + "/latest";
 
         int attempts = 0;
         int maxAttempts = 3;
@@ -32,16 +36,19 @@ public class NavService {
                 ExternalNavResponse response = restTemplate.getForObject(url, ExternalNavResponse.class);
 
                 if (response == null) {
-                    log.error("NAV API returned null for asset {}", assetName);
-                    throw new NavFetchException("NAV API returned null for " + assetName);
+                    log.error("NAV API returned null for asset {}", asset.getName());
+                    throw new NavFetchException("NAV API returned null for " + asset.getName());
                 }
-                if (response.getNav() == null) {
-                    log.error("NAV API returned NAV value = null for asset {}", assetName);
-                    throw new NavFetchException("NAV API returned NAV value = null for " + assetName);
+
+                ExternalNavResponse.ApiNavData apiData = response.getData().get(0);
+
+                if (apiData.getNav() == null) {
+                    log.error("NAV API returned NAV value = null for asset {}", asset.getName());
+                    throw new NavFetchException("NAV API returned NAV value = null for " + asset.getName());
                 }
-                if (response.getDate() == null) {
-                    log.warn("Null date for asset {}", assetName);
-                    throw new NavFetchException("Null date for asset = " + assetName);
+                if (apiData.getDate() == null) {
+                    log.warn("Null date for asset {}", asset.getName());
+                    throw new NavFetchException("Null date for asset = " + asset.getName());
                 }
 
                 NavData navData = NavMapper.map(response);
@@ -53,15 +60,15 @@ public class NavService {
 
                 if (attempts == maxAttempts) {
                     log.error("Failed to fetch NAV after {} attempts for asset {}",
-                            maxAttempts, assetName, ex);
+                            maxAttempts, asset.getName(), ex);
                     throw new NavFetchException(
-                            "Failed after " + maxAttempts + " attempts for " + assetName,
+                            "Failed after " + maxAttempts + " attempts for " + asset.getName(),
                             ex
                     );
                 }
             }
         }
-        log.error("Unexpected error while fetching NAV for asset {}", assetName);
+        log.error("Unexpected error while fetching NAV for asset {}", asset.getName());
         throw new NavFetchException("Unexpected error");
     }
 }

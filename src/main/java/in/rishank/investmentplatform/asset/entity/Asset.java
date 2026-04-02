@@ -11,12 +11,10 @@ public class Asset {
     private Long id;
 
     private String name;
+    private String schemeCode;
 
     private String assetType;
-
     private String category;
-
-    private Double expenseRatio;
 
     public Long getId() {
         return id;
@@ -34,6 +32,14 @@ public class Asset {
         this.name = name;
     }
 
+    public String getSchemeCode() {
+        return schemeCode;
+    }
+
+    public void setSchemeCode(String schemeCode) {
+        this.schemeCode = schemeCode;
+    }
+
     public String getAssetType() {
         return assetType;
     }
@@ -48,13 +54,5 @@ public class Asset {
 
     public void setCategory(String category) {
         this.category = category;
-    }
-
-    public double getExpenseRatio() {
-        return expenseRatio;
-    }
-
-    public void setExpenseRatio(double expenseRatio) {
-        this.expenseRatio = expenseRatio;
     }
 }

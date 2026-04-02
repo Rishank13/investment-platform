@@ -86,7 +86,7 @@ public class RankingService {
                     case "cagr" -> value = analytics.getCagr();
                     case "return" -> value = analytics.getReturnPercentage();
                     case "volatility" -> value = analytics.getVolatility();
-                    case "score" -> value = calculateScore(analytics, asset);
+                    case "score" -> value = calculateScore(analytics);
                     default -> throw new InvalidMetricException("Invalid metric");
                 }
 
@@ -128,10 +128,8 @@ public class RankingService {
         return result.subList(start, end);
     }
 
-    private double calculateScore(AnalyticsResponse a, Asset asset) {
+    private double calculateScore(AnalyticsResponse a) {
 
-        return (0.5 * a.getCagr())
-                - (0.3 * a.getVolatility())
-                - (0.2 * asset.getExpenseRatio());
+        return (0.7 * a.getCagr()) - (0.3 * a.getVolatility());
     }
 }
