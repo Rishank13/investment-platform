@@ -27,4 +27,30 @@ public class RankingController {
                                             @RequestParam(defaultValue = "10") int limit){
         return rankingService.getTopAssets(period, metric, category, page, limit);
     }
+
+    @GetMapping("/top-assets")
+    public List<RankingResponse> getTopAssetsSimple(
+            @RequestParam int duration
+    ){
+        return rankingService.getTopAssets(duration, "return", null, 1, 10);
+    }
+
+    @GetMapping("/low-volatility")
+    public List<RankingResponse> getLowVolatilitySimple(
+            @RequestParam int duration
+    ){
+        return rankingService.getTopAssets(duration, "volatility", null, 1, 10);
+    }
+
+    @GetMapping("/high-cagr")
+    public List<RankingResponse> getHighCagrSimple(
+            @RequestParam int duration
+    ){
+        return rankingService.getTopAssets(duration, "cagr", null, 1, 10);
+    }
+
+    @GetMapping("/consistent")
+    public List<RankingResponse> getConsistentSimple(){
+        return rankingService.getTopAssets(5, "score", null, 1, 10);
+    }
 }

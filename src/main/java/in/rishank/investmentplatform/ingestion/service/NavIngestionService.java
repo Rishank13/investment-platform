@@ -1,9 +1,9 @@
-package in.rishank.investmentplatform.pricing.service;
+package in.rishank.investmentplatform.ingestion.service;
 
 import in.rishank.investmentplatform.asset.entity.Asset;
 import in.rishank.investmentplatform.asset.service.AssetService;
 import in.rishank.investmentplatform.common.exception.NavFetchException;
-import in.rishank.investmentplatform.pricing.dto.NavData;
+import in.rishank.investmentplatform.ingestion.dto.NavData;
 import in.rishank.investmentplatform.pricing.entity.PriceHistory;
 import in.rishank.investmentplatform.pricing.repository.PriceHistoryRepository;
 import org.slf4j.Logger;
@@ -14,17 +14,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class PriceIngestionService {
+public class NavIngestionService {
 
     private final AssetService assetService;
     private final PriceHistoryRepository priceHistoryRepository;
-    private final NavService navService;
-    private static final Logger log = LoggerFactory.getLogger(PriceIngestionService.class);
+    private final NavFetchService navFetchService;
+    private static final Logger log = LoggerFactory.getLogger(NavIngestionService.class);
 
-    public PriceIngestionService(AssetService assetService, PriceHistoryRepository priceHistoryRepository, NavService navService) {
+    public NavIngestionService(AssetService assetService, PriceHistoryRepository priceHistoryRepository, NavFetchService navFetchService) {
         this.assetService = assetService;
         this.priceHistoryRepository = priceHistoryRepository;
-        this.navService = navService;
+        this.navFetchService = navFetchService;
     }
 
     public void ingestDailyPrices(){
@@ -40,7 +40,7 @@ public class PriceIngestionService {
         for(Asset asset : assets){
 
             try {
-                NavData navData = navService.fetchNav(asset);
+                NavData navData = navFetchService.fetchNav(asset);
 
                 PriceHistory ph = new PriceHistory();
                 ph.setAsset(asset);

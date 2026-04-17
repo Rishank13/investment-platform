@@ -1,15 +1,15 @@
 package in.rishank.investmentplatform.scheduler;
 
-import in.rishank.investmentplatform.pricing.service.PriceIngestionService;
+import in.rishank.investmentplatform.ingestion.service.NavIngestionService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PriceScheduler {
 
-    private final PriceIngestionService ingestionService;
+    private final NavIngestionService ingestionService;
 
-    public PriceScheduler(PriceIngestionService ingestionService) {
+    public PriceScheduler(NavIngestionService ingestionService) {
         this.ingestionService = ingestionService;
     }
 

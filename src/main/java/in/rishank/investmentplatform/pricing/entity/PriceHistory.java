@@ -13,6 +13,12 @@ import java.time.LocalDate;
                         name = "unique_asset_date",
                         columnNames = {"asset_id", "date"}
                 )
+        },
+        indexes = {
+                @Index(
+                        name = "idx_asset_date",
+                        columnList = "asset_id, date"
+                )
         }
 )
 public class PriceHistory {

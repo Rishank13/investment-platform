@@ -1,4 +1,4 @@
-package in.rishank.investmentplatform.pricing.dto;
+package in.rishank.investmentplatform.ingestion.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

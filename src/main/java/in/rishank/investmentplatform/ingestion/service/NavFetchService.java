@@ -1,11 +1,11 @@
-package in.rishank.investmentplatform.pricing.service;
+package in.rishank.investmentplatform.ingestion.service;
 
 import in.rishank.investmentplatform.asset.entity.Asset;
 import in.rishank.investmentplatform.common.exception.NavFetchException;
 import in.rishank.investmentplatform.config.NavApiConfig;
-import in.rishank.investmentplatform.pricing.dto.ExternalNavResponse;
-import in.rishank.investmentplatform.pricing.dto.NavData;
-import in.rishank.investmentplatform.pricing.mapper.NavMapper;
+import in.rishank.investmentplatform.ingestion.dto.ExternalNavResponse;
+import in.rishank.investmentplatform.ingestion.dto.NavData;
+import in.rishank.investmentplatform.ingestion.parser.MfapiParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -13,13 +13,13 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class NavService {
+public class NavFetchService {
 
     private final RestTemplate restTemplate;
     private final NavApiConfig config;
-    private static final Logger log = LoggerFactory.getLogger(NavService.class);
+    private static final Logger log = LoggerFactory.getLogger(NavFetchService.class);
 
-    public NavService(RestTemplate restTemplate, NavApiConfig config) {
+    public NavFetchService(RestTemplate restTemplate, NavApiConfig config) {
         this.restTemplate = restTemplate;
         this.config = config;
     }
@@ -51,7 +51,7 @@ public class NavService {
                     throw new NavFetchException("Null date for asset = " + asset.getName());
                 }
 
-                NavData navData = NavMapper.map(response);
+                NavData navData = MfapiParser.map(response);
 
                 return navData;
 

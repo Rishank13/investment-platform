@@ -1,12 +1,12 @@
-package in.rishank.investmentplatform.pricing.mapper;
+package in.rishank.investmentplatform.ingestion.parser;
 
-import in.rishank.investmentplatform.pricing.dto.ExternalNavResponse;
-import in.rishank.investmentplatform.pricing.dto.NavData;
+import in.rishank.investmentplatform.ingestion.dto.ExternalNavResponse;
+import in.rishank.investmentplatform.ingestion.dto.NavData;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class NavMapper {
+public class MfapiParser {
 
     public static NavData map(ExternalNavResponse response) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
